@@ -191,14 +191,14 @@ public class CriticalPermissionsHelper {
     public static void grantPermission(
             final Context context,
             final EPermissionType permissionType,
-            final IResultCallbacks callbackInterface,
             final String packageNameOfAppNeedingPermission,
-            final String signatureOfAppNeedingPermission
+            final String signatureOfAppNeedingPermission,
+            final IResultCallbacks callbackInterface
     ) {
         executeAccessMgrPermissionCommand(
-                context, permissionType, callbackInterface,
-                packageNameOfAppNeedingPermission, signatureOfAppNeedingPermission,
-                EPermissionAccessAction.GRANT_PERMISSION
+                context, permissionType, packageNameOfAppNeedingPermission,
+                signatureOfAppNeedingPermission, EPermissionAccessAction.GRANT_PERMISSION,
+                callbackInterface
         );
     }
 
@@ -210,19 +210,19 @@ public class CriticalPermissionsHelper {
             final String signatureOfAppNeedingPermission
     ) {
         executeAccessMgrPermissionCommand(
-                context, permissionType, callbackInterface,
-                packageNameOfAppNeedingPermission, signatureOfAppNeedingPermission,
-                EPermissionAccessAction.VERIFY
+                context, permissionType, packageNameOfAppNeedingPermission,
+                signatureOfAppNeedingPermission, EPermissionAccessAction.VERIFY,
+                callbackInterface
         );
     }
 
     private static void executeAccessMgrPermissionCommand(
             final Context context,
             final EPermissionType permissionType,
-            final IResultCallbacks callbackInterface,
             final String packageNameOfAppNeedingPermission,
             final String signatureOfAppNeedingPermission,
-            final EPermissionAccessAction permissionAccessAction
+            final EPermissionAccessAction permissionAccessAction,
+            final IResultCallbacks callbackInterface
     ) {
         String profileName = "AccessMgr-1";
         String profileData = "";
