@@ -205,9 +205,9 @@ public class CriticalPermissionsHelper {
     public static void verifyPermission(
             final Context context,
             final EPermissionType permissionType,
-            final IResultCallbacks callbackInterface,
             final String packageNameOfAppNeedingPermission,
-            final String signatureOfAppNeedingPermission
+            final String signatureOfAppNeedingPermission,
+            final IResultCallbacks callbackInterface
     ) {
         executeAccessMgrPermissionCommand(
                 context, permissionType, packageNameOfAppNeedingPermission,
