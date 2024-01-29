@@ -1,14 +1,9 @@
 package com.zebra.criticalpermissionshelper;
 
-import android.Manifest.permission;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.net.Uri;
-import android.os.Build;
-import android.telephony.TelephonyManager;
 
 import java.util.Base64;
 
@@ -189,6 +184,67 @@ public class CriticalPermissionsHelper {
             e.printStackTrace();
             if (callbackInterface != null) {
                 callbackInterface.onError("Error on profile: " + profileName + "\nError:" + e.getLocalizedMessage() + "\nProfileData:" + profileData, "");
+            }
+        }
+    }
+
+    public static void grantPermission(
+            final Context context,
+            final EPermissionType permissionType,
+            final IResultCallbacks callbackInterface,
+            final String packageNameOfAppNeedingPermission,
+            final String signatureOfAppNeedingPermission
+    ) {
+        executeAccessMgrPermissionCommand(
+                context, permissionType, callbackInterface,
+                packageNameOfAppNeedingPermission, signatureOfAppNeedingPermission,
+                EPermissionAccessAction.GRANT_PERMISSION
+        );
+    }
+
+    public static void verifyPermission(
+            final Context context,
+            final EPermissionType permissionType,
+            final IResultCallbacks callbackInterface,
+            final String packageNameOfAppNeedingPermission,
+            final String signatureOfAppNeedingPermission
+    ) {
+        executeAccessMgrPermissionCommand(
+                context, permissionType, callbackInterface,
+                packageNameOfAppNeedingPermission, signatureOfAppNeedingPermission,
+                EPermissionAccessAction.VERIFY
+        );
+    }
+
+    private static void executeAccessMgrPermissionCommand(
+            final Context context,
+            final EPermissionType permissionType,
+            final IResultCallbacks callbackInterface,
+            final String packageNameOfAppNeedingPermission,
+            final String signatureOfAppNeedingPermission,
+            final EPermissionAccessAction permissionAccessAction
+    ) {
+        String profileName = "AccessMgr-1";
+        String profileData = "";
+        try {
+            profileData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                    "<characteristic type=\"Profile\">" +
+                    "<parm name=\"ProfileName\" value=\"" + profileName + "\"/>" +
+                    "<characteristic type=\"AccessMgr\" version=\"11.3\">" +
+                    "<parm name=\"PermissionAccessAction\" value=\"" + permissionAccessAction.toString() + "\" />" +
+                    "<parm name=\"PermissionAccessPackageName\" value=\"" + packageNameOfAppNeedingPermission + "\" />" +
+                    "<parm name=\"PermissionAccessPermissionName\" value=\"" + permissionType.toString() + "\" />\n" +
+                    "<parm name=\"PermissionAccessSignature\" value=\"" + signatureOfAppNeedingPermission + "\" />" +
+                    "</characteristic>" +
+                    "</characteristic>";
+            ProfileManagerCommand profileManagerCommand = new ProfileManagerCommand(context);
+            profileManagerCommand.execute(profileData, profileName, callbackInterface);
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (callbackInterface != null) {
+                callbackInterface.onError("Error on profile: " +
+                        profileName + "\nError:" + e.getLocalizedMessage() + "\nProfileData:" +
+                        profileData, "");
             }
         }
     }
